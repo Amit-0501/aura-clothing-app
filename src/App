@@ -1,0 +1,70 @@
+import { useState, useMemo } from 'react'
+import { CartProvider } from './context/CartContext'
+import Navbar from './components/Navbar'
+import HeroBanner from './components/HeroBanner'
+import FilterBar from './components/FilterBar'
+import ProductGrid from './components/ProductGrid'
+import CartDrawer from './components/CartDrawer'
+import ProductModal from './components/ProductModal'
+import Footer from './components/Footer'
+import { products } from './data/products'
+
+export default function App() {
+  const [cartOpen, setCartOpen]           = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState(null)
+  const [activeCategory, setActiveCategory]   = useState('All')
+  const [sortBy, setSortBy]               = useState('featured')
+
+  const filteredProducts = useMemo(() => {
+    let result = [...products]
+
+    if (activeCategory !== 'All') {
+      result = result.filter((p) => p.category === activeCategory)
+    }
+
+    if (sortBy === 'price_asc') {
+      result.sort((a, b) => a.price - b.price)
+    } else if (sortBy === 'price_desc') {
+      result.sort((a, b) => b.price - a.price)
+    } else {
+      // featured: true items first
+      result.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
+    }
+
+    return result
+  }, [activeCategory, sortBy])
+
+  return (
+    <CartProvider>
+      <div className="min-h-screen bg-[#0a0a0a] text-[#f5f5f5]">
+        <Navbar onCartOpen={() => setCartOpen(true)} />
+
+        <HeroBanner />
+
+        <FilterBar
+          activeCategory={activeCategory}
+          onCategoryChange={setActiveCategory}
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+        />
+
+        <ProductGrid
+          products={filteredProducts}
+          onProductClick={setSelectedProduct}
+        />
+
+        <Footer />
+
+        {/* Overlays */}
+        <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+
+        {selectedProduct && (
+          <ProductModal
+            product={selectedProduct}
+            onClose={() => setSelectedProduct(null)}
+          />
+        )}
+      </div>
+    </CartProvider>
+  )
+}
