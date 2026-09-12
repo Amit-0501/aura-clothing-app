@@ -27,3 +27,21 @@ A fully functional single-page clothing store built with **React 18**, **Vite 5*
 ---
 
 ## Project Structure
+
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) v18 or higher
+
+### Install & Run
+
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Start the dev server
+npm run dev
